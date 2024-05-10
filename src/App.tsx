@@ -63,8 +63,8 @@ const Fretboard = () => {
   const [frets, setFrets] = useState(defaultFrets);
 
   return (
-    <>
-      <div className="border t-130" style={{ width: "100%", background: "rgb(164 117 79 / 80%)" }}>
+    <div className="max-width-100 overflow-x-auto flex-column-start">
+      <div className="border t-130" style={{ background: "rgb(164 117 79 / 80%)" }}>
         { 
           guitarTuning.map(note => (
             <div className="flex-centered string" key={`${note}-string`}>
@@ -73,7 +73,7 @@ const Fretboard = () => {
           ))
         }
       </div>
-      <div className="flex-centered t-130">
+      <div className="flex-centered border t-130">
         { frets.map(n => {
             const markedFretClass = markedFrets.indexOf(n) !== -1 ? "bold" : "";
             return (<div key={`fret-${n}`} className={`w2-h2 hoverable centered-text flex-centered border-right ${markedFretClass}`}>
@@ -83,7 +83,7 @@ const Fretboard = () => {
           )
         }
       </div>
-    </>
+    </div>
   );
 };
 
@@ -99,7 +99,7 @@ const ProjectSettingsForm = (props: ProjectSettingsFormProps) => {
   const projectSettings = useContext(ProjectSettingsContext);
   return (
     <div>
-      <h2>Project settings</h2>
+      <h2>Settings</h2>
       Mode
       <select onChange={e => setRoot(e.target.value as Music.NoteName)}>
         {MD.ROOTS.map((noteName) => (
@@ -137,9 +137,9 @@ const App = () => {
   const modalNotes = MD.modalNotes(root, mode, indexedNotes);
   return (
     <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly }}>
-      <h1>Zander Noriega - Music School</h1>
+      <h1>Zander Noriega - Music Education Tool Suite (v0.1)</h1>
       <h2>The modes on the guitar fretboard</h2>
-      <div><strong>{root} {mode}</strong> notes are currently highlighted:</div>
+      <div>The notes for <strong>{root} {mode}</strong> are highlighted:</div>
       <Fretboard />
       <ProjectSettingsForm
         setRoot={setRoot}

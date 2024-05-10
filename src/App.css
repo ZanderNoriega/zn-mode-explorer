@@ -54,3 +54,17 @@ body {
 .cursor-pointer {
   cursor: pointer;
 }
+
+.max-width-100 {
+  max-width: 100%;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
+.flex-column-start {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}

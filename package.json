@@ -1,5 +1,6 @@
 {
   "name": "zn-mode-explorer",
+  "homepage": "https://zandernoriega.com/school",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
