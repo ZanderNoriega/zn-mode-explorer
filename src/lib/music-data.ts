@@ -75,9 +75,7 @@ export const modalNotes = (root: Music.NoteName, mode: Music.Mode, indexedNotes:
   let distanceIndex = modeIndex;
   const xs : MusicData.IndexedNote[] = [];
   for (let i = startingIndex; i < indexedNotes.length;) {
-    // xs.push(indexedNotes[i]);
     const distance = M.majorScaleDistances[distanceIndex];
-    console.log("distance", distance);
     xs.push(indexedNotes[i]);
     i = i + distance;
     distanceIndex = (distanceIndex + 1) % M.majorScaleDistances.length;

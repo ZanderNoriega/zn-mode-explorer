@@ -28,6 +28,14 @@ body {
   font-size: 0.5em;
 }
 
+.t-120 {
+  font-size: 1.2em;
+}
+
+.t-130 {
+  font-size: 1.3em;
+}
+
 .flex-centered {
   display: flex;
   align-items: center;
@@ -45,8 +53,4 @@ body {
 
 .cursor-pointer {
   cursor: pointer;
-}
-
-.f-120 {
-  font-size: 1.2em;
 }

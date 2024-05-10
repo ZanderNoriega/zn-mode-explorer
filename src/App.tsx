@@ -19,11 +19,11 @@ type ProjectSettings = {
 const ProjectSettingsContext = createContext<ProjectSettings | null>(null);
 
 let defaultFrets : number[] = [];
-for (let i = 0; i < 23; i++) {
+for (let i = 0; i < 25; i++) {
   defaultFrets.push(i);
 }
 
-const markedFrets = [3, 5, 7, 9, 12, 15, 17, 19, 22];
+const markedFrets = [3, 5, 7, 9, 12, 15, 17, 19, 22, 24];
 
 type FretNoteProps = { note: Music.Note, fret: Instrument.Fret };
 
@@ -64,7 +64,7 @@ const Fretboard = () => {
 
   return (
     <>
-      <div className="border f-120" style={{ width: "100%", background: "rgb(164 117 79 / 80%)" }}>
+      <div className="border t-130" style={{ width: "100%", background: "rgb(164 117 79 / 80%)" }}>
         { 
           guitarTuning.map(note => (
             <div className="flex-centered string" key={`${note}-string`}>
@@ -73,7 +73,7 @@ const Fretboard = () => {
           ))
         }
       </div>
-      <div className="flex-centered f-120">
+      <div className="flex-centered t-130">
         { frets.map(n => {
             const markedFretClass = markedFrets.indexOf(n) !== -1 ? "bold" : "";
             return (<div key={`fret-${n}`} className={`w2-h2 hoverable centered-text flex-centered border-right ${markedFretClass}`}>
