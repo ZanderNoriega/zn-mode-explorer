@@ -51,6 +51,7 @@ export const nextNoteNameChromaticSharps = (name: Music.NoteName): Music.NoteNam
   }
 }
 
-const majorScaleDistances : Music.SemitoneDistance[] = [
+export const majorScaleDistances : Music.SemitoneDistance[] = [
   2, 2, 1, 2, 2, 2, 1
 ];
+

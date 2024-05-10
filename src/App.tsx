@@ -8,10 +8,13 @@ import * as MD from "./lib/music-data";
 const indexedNotes = MD.generateNoteIndexes();
 
 type ProjectSettings = { 
+  root: Music.NoteName,
   mode: Music.Mode,
   indexedNotes: MusicData.IndexedNote[],
+  modalNotes: MusicData.IndexedNote[],
   showOctaves: boolean,
   whiteKeysOnly: boolean,
+  modalNotesOnly: boolean,
 };
 const ProjectSettingsContext = createContext<ProjectSettings | null>(null);
 
@@ -27,14 +30,20 @@ type FretNoteProps = { note: Music.Note, fret: Instrument.Fret };
 const FretNote = (props: FretNoteProps) => {
   const { fret, note } = props;
   const projectSettings = useContext(ProjectSettingsContext);
-  const markedFretClass = markedFrets.indexOf(fret) !== -1 ? "bold" : "";
+  const modalNotes = projectSettings!.modalNotes || [];
+  const formattedNote = projectSettings!.showOctaves ? note : note.replace(/[0-9]|-/, "");
+  const isModalNote = modalNotes.map(mn => mn[1]).indexOf(note) !== -1;
+
   const nutClass = fret === 0 ? "bold" : "";
   const innerFretClass = fret === 0 ? "" : "t-50";
-  const formattedNote = projectSettings!.showOctaves ? note : note.replace(/[0-9]|-/, "");
+  const modalNoteClass = isModalNote ? "hl-bg bold" : "";
+
+  const shouldBeHidden = (projectSettings!.whiteKeysOnly && MD.hasAccidental(note))
+    || (projectSettings!.modalNotesOnly && !isModalNote)
 
   return (
-    <div key={note} className={`w2-h2 hoverable centered-text flex-centered ${nutClass} ${markedFretClass} border-right cursor-pointer`}>
-      <div className={`${innerFretClass}`}>{projectSettings!.whiteKeysOnly ? ( MD.hasAccidental(note) ? "" : formattedNote) : formattedNote }</div>
+    <div key={note} className={`w2-h2 hoverable centered-text flex-centered ${nutClass} border-right cursor-pointer ${modalNoteClass}`}>
+      <div className={`${innerFretClass}`}>{ shouldBeHidden ? "" : formattedNote }</div>
     </div>
   );
 };
@@ -55,7 +64,7 @@ const Fretboard = () => {
 
   return (
     <>
-      <div className="border" style={{ width: "100%", background: "#ac6227" }}>
+      <div className="border f-120" style={{ width: "100%", background: "rgb(164 117 79 / 80%)" }}>
         { 
           guitarTuning.map(note => (
             <div className="flex-centered string" key={`${note}-string`}>
@@ -64,11 +73,13 @@ const Fretboard = () => {
           ))
         }
       </div>
-      <div className="flex-centered">
-        { frets.map(n =>
-            <div key={`fret-${n}`} className="w2-h2 hoverable centered-text flex-centered border-right">
+      <div className="flex-centered f-120">
+        { frets.map(n => {
+            const markedFretClass = markedFrets.indexOf(n) !== -1 ? "bold" : "";
+            return (<div key={`fret-${n}`} className={`w2-h2 hoverable centered-text flex-centered border-right ${markedFretClass}`}>
               <div className="t-50">{ n }</div>
-            </div>
+            </div>);
+            }
           )
         }
       </div>
@@ -76,29 +87,29 @@ const Fretboard = () => {
   );
 };
 
-const MODES : Music.Mode[] = [
-  "ionian",
-  "dorian",
-  "phrygian",
-  "lydian",
-  "mixolydian",
-  "aeolian",
-  "locrian",
-];
-
 type ProjectSettingsFormProps = {
-  setMode: (m: Music.Mode) => void
-  setShowOctaves: (b: boolean) => void
-  setWhiteKeysOnly: (b: boolean) => void
+  setRoot: (x: Music.NoteName) => void,
+  setMode: (x: Music.Mode) => void,
+  setShowOctaves: (x: boolean) => void,
+  setWhiteKeysOnly: (x: boolean) => void,
+  setModalNotesOnly: (x: boolean) => void,
 };
 const ProjectSettingsForm = (props: ProjectSettingsFormProps) => {
-  const { setMode, setShowOctaves, setWhiteKeysOnly } = props;
+  const { setRoot, setMode, setShowOctaves, setWhiteKeysOnly, setModalNotesOnly } = props;
   const projectSettings = useContext(ProjectSettingsContext);
   return (
     <div>
-      <h2>Settings</h2>
-      Mode <select onChange={e => setMode(e.target.value as Music.Mode)}>
-        {MODES.map((mode) => (
+      <h2>Project settings</h2>
+      Mode
+      <select onChange={e => setRoot(e.target.value as Music.NoteName)}>
+        {MD.ROOTS.map((noteName) => (
+          <option key={noteName} value={noteName}>
+            {noteName}
+          </option>
+        ))}
+      </select>
+      <select onChange={e => setMode(e.target.value as Music.Mode)}>
+        {MD.MODES.map((mode) => (
           <option key={mode} value={mode}>
             {mode}
           </option>
@@ -108,25 +119,34 @@ const ProjectSettingsForm = (props: ProjectSettingsFormProps) => {
         Show octaves <input type="checkbox" checked={projectSettings!.showOctaves} onChange={e => setShowOctaves(e.target.checked)} />
       </div>
       <div>
-        White keys only <input type="checkbox" checked={projectSettings!.whiteKeysOnly} onChange={e => setWhiteKeysOnly(e.target.checked)} />
+        Show white keys only <input type="checkbox" checked={projectSettings!.whiteKeysOnly} onChange={e => setWhiteKeysOnly(e.target.checked)} />
+      </div>
+      <div>
+        Show modal notes only <input type="checkbox" checked={projectSettings!.modalNotesOnly} onChange={e => setModalNotesOnly(e.target.checked)} />
       </div>
     </div>
   );
 };
 
 const App = () => {
+  const [ root, setRoot ] = useState<Music.NoteName>("C");
   const [ mode, setMode ] = useState<Music.Mode>("ionian");
   const [ showOctaves, setShowOctaves ] = useState(true);
   const [ whiteKeysOnly, setWhiteKeysOnly ] = useState(false);
+  const [ modalNotesOnly, setModalNotesOnly ] = useState(false);
+  const modalNotes = MD.modalNotes(root, mode, indexedNotes);
   return (
-    <ProjectSettingsContext.Provider value={{ mode, indexedNotes, showOctaves, whiteKeysOnly }}>
-      <div>Studying the <strong>{mode}</strong> mode.</div>
-      <h2>Guitar</h2>
+    <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly }}>
+      <h1>Zander Noriega - Music School</h1>
+      <h2>The modes on the guitar fretboard</h2>
+      <div><strong>{root} {mode}</strong> notes are currently highlighted:</div>
       <Fretboard />
       <ProjectSettingsForm
+        setRoot={setRoot}
         setMode={setMode}
         setShowOctaves={setShowOctaves}
-        setWhiteKeysOnly={setWhiteKeysOnly} />
+        setWhiteKeysOnly={setWhiteKeysOnly}
+        setModalNotesOnly={setModalNotesOnly} />
     </ProjectSettingsContext.Provider>
   );
 };

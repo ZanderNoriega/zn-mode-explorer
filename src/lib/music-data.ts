@@ -30,3 +30,58 @@ export const getNextFrom = (from: Music.Note, count: number, iNotes: MusicData.I
 
 export const hasAccidental = (note: Music.Note): boolean =>
   note.indexOf("b") !== -1 || note.indexOf("#") !== -1
+
+export const MODES : Music.Mode[] = [
+  "ionian",
+  "dorian",
+  "phrygian",
+  "lydian",
+  "mixolydian",
+  "aeolian",
+  "locrian",
+];
+
+export const ROOTS : Music.NoteName[] = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
+];
+
+export const modalNotes = (root: Music.NoteName, mode: Music.Mode, indexedNotes: MusicData.IndexedNote[]): MusicData.IndexedNote[] => {
+
+  // start from the right indexedNotes index
+  let startingIndex = 0;
+  for (let i = 0; i < indexedNotes.length; i++) {
+    startingIndex = i;
+    const [ , noteName ] : MusicData.IndexedNote =  indexedNotes[i];
+    if (noteName.indexOf(root) !== -1) {
+      break;
+    }
+  }
+
+  // so we start from the right distance element
+  const modeIndex = MODES.reduce((acc, m, i) => {
+    return m === mode ? i : acc;
+  }, 0);
+  let distanceIndex = modeIndex;
+  const xs : MusicData.IndexedNote[] = [];
+  for (let i = startingIndex; i < indexedNotes.length;) {
+    // xs.push(indexedNotes[i]);
+    const distance = M.majorScaleDistances[distanceIndex];
+    console.log("distance", distance);
+    xs.push(indexedNotes[i]);
+    i = i + distance;
+    distanceIndex = (distanceIndex + 1) % M.majorScaleDistances.length;
+  }
+
+  return xs;
+}
