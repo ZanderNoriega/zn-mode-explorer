@@ -155,7 +155,6 @@ const App = () => {
   const [ whiteKeysOnly, setWhiteKeysOnly ] = useState(false);
   const [ modalNotesOnly, setModalNotesOnly ] = useState(false);
   const modalNotes = MD.modalNotes(root, mode, MD.MODES_ALL, indexedNotes);
-  console.log("modalNotes", modalNotes);
   return (
     <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, synths }}>
       <h1><a href="/">ZanderNoriega.com</a> - Music Theory Tool Suite (v0.3.0)</h1>

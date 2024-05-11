@@ -105,9 +105,7 @@ export const modalNotes = (
   const baseScale : Music.BaseScale = modes.reduce((acc: Music.BaseScale, m, i) => {
     return m[0] === mode ? m[1] : acc;
   }, "major");
-  console.log("baseScale", baseScale);
   const semitoneDistances = semitoneDistanceMap[baseScale];
-  console.log("semitoneDistances", semitoneDistances);
   // start from the right indexedNotes index
   let startingIndex = 0;
   for (let i = 0; i < indexedNotes.length; i++) {
@@ -117,7 +115,6 @@ export const modalNotes = (
       break;
     }
   }
-  console.log("startingIndex", startingIndex);
 
   // so we start from the right distance element
   const modeIndex = MODES[baseScale].reduce((acc, m: Music.Mode, i) => {
@@ -129,7 +126,6 @@ export const modalNotes = (
     const distance = semitoneDistances[distanceIndex];
     xs.push(indexedNotes[i]);
     i = i + distance;
-    console.log("distanceIndex", distanceIndex, semitoneDistances.length);
     distanceIndex = (distanceIndex + 1) % semitoneDistances.length;
   }
 
