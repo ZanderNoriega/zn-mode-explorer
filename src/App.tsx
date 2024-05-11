@@ -35,12 +35,12 @@ const FretNote = (props: FretNoteProps) => {
   const formattedNote = projectSettings!.showOctaves ? note : note.replace(/[0-9]|-/, "");
   const isModalNote = modalNotes.map(mn => mn[1]).indexOf(note) !== -1;
 
-  const nutClass = fret === 0 ? "bold" : "";
-  const innerFretClass = fret === 0 || fret === 12 || fret === 24 ? "" : "t-50";
-  const modalNoteClass = isModalNote ? "hl-bg bold" : "";
-
   const shouldBeHidden = (projectSettings!.whiteKeysOnly && MD.hasAccidental(note))
     || (projectSettings!.modalNotesOnly && !isModalNote)
+
+  const nutClass = fret === 0 ? "bold" : "";
+  const innerFretClass = fret === 0 || fret === 12 || fret === 24 ? "" : "t-50";
+  const modalNoteClass = isModalNote && ! shouldBeHidden ? "hl-bg bold" : "";
 
   return (
     <div key={note} className={`w2-h2 hoverable centered-text flex-centered ${nutClass} border-right cursor-pointer ${modalNoteClass}`}>
@@ -152,7 +152,7 @@ const App = () => {
   const modalNotes = MD.modalNotes(root, mode, MD.MODES[baseScale], indexedNotes, MD.semitoneDistanceMap[baseScale]);
   return (
     <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, baseScale }}>
-      <h1>Zander Noriega - Music Education Tool Suite (v0.1)</h1>
+      <h1>Zander Noriega - Music Theory Tool Suite (v0.1.2)</h1>
       <h2>The modes on the guitar fretboard</h2>
       <div>The notes for <strong>{root} {mode}</strong> are highlighted:</div>
       <Fretboard />
