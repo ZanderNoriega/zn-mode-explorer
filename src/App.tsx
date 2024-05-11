@@ -43,13 +43,13 @@ const FretNote = (props: FretNoteProps) => {
   const innerFretClass = fret === 0 || fret === 12 || fret === 24 ? "" : "t-50";
   const modalNoteClass = isModalNote && ! shouldBeHidden ? "hl-bg bold" : "";
 
-  const onClick = () => {
+  const onMouseDown = () => {
     const synth : Tone.BaseSynth | undefined = projectSettings!.synths["default"];
     synth!.triggerAttackRelease(note, "16n");
   };
 
   return (
-    <div key={note} onClick={onClick} className={`w2-h2 hoverable centered-text flex-centered ${nutClass} border-right cursor-pointer ${modalNoteClass}`}>
+    <div key={note} onMouseDown={onMouseDown} className={`w2-h2 hoverable centered-text flex-centered ${nutClass} border-right cursor-pointer ${modalNoteClass}`}>
       <div className={`${innerFretClass}`}>{ shouldBeHidden ? "" : formattedNote }</div>
     </div>
   );
