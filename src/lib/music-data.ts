@@ -63,6 +63,11 @@ export const MODES : Music.ModesMap = {
   ],
 };
 
+export const MODES_ALL : ([ Music.Mode, Music.BaseScale ])[] = (Object.keys(MODES) as Music.BaseScale[]).reduce(
+  (acc: ([Music.Mode, Music.BaseScale])[], baseScale: Music.BaseScale) => acc.concat(MODES[baseScale].map(m => [ m, baseScale ])),
+  []
+);
+
 export const ROOTS : Music.NoteName[] = [
   "C",
   "C#",
@@ -93,10 +98,16 @@ export const semitoneDistanceMap : Music.SemitoneDistanceMap = {
 export const modalNotes = (
   root: Music.NoteName,
   mode: Music.Mode,
-  modes: Music.Mode[],
-  indexedNotes: MusicData.IndexedNote[],
-  semitoneDistances: Music.SemitoneDistance[]
+  modes: ([ Music.Mode, Music.BaseScale ])[],
+  indexedNotes: MusicData.IndexedNote[]
 ): MusicData.IndexedNote[] => {
+
+  const baseScale : Music.BaseScale = modes.reduce((acc: Music.BaseScale, m, i) => {
+    return m[0] === mode ? m[1] : acc;
+  }, "major");
+  console.log("baseScale", baseScale);
+  const semitoneDistances = semitoneDistanceMap[baseScale];
+  console.log("semitoneDistances", semitoneDistances);
   // start from the right indexedNotes index
   let startingIndex = 0;
   for (let i = 0; i < indexedNotes.length; i++) {
@@ -106,9 +117,10 @@ export const modalNotes = (
       break;
     }
   }
+  console.log("startingIndex", startingIndex);
 
   // so we start from the right distance element
-  const modeIndex = modes.reduce((acc, m, i) => {
+  const modeIndex = MODES[baseScale].reduce((acc, m: Music.Mode, i) => {
     return m === mode ? i : acc;
   }, 0);
   let distanceIndex = modeIndex;
@@ -117,6 +129,7 @@ export const modalNotes = (
     const distance = semitoneDistances[distanceIndex];
     xs.push(indexedNotes[i]);
     i = i + distance;
+    console.log("distanceIndex", distanceIndex, semitoneDistances.length);
     distanceIndex = (distanceIndex + 1) % semitoneDistances.length;
   }
 
