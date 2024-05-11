@@ -39,7 +39,7 @@ const FretNote = (props: FretNoteProps) => {
     || (projectSettings!.modalNotesOnly && !isModalNote)
 
   const nutClass = fret === 0 ? "bold" : "";
-  const innerFretClass = fret === 0 || fret === 12 || fret === 24 ? "" : "t-50";
+  const innerFretClass = fret === 0 || fret === 12 || fret === 24 ? "t-85" : "t-50";
   const modalNoteClass = isModalNote && !shouldBeHidden ? "hl-bg bold" : "";
 
   const onMouseDown = () => {
@@ -48,7 +48,7 @@ const FretNote = (props: FretNoteProps) => {
   };
 
   return (
-    <div key={note} onMouseDown={onMouseDown} className={`w2-h2 hoverable centered-text flex-centered ${nutClass} border-right cursor-pointer ${modalNoteClass}`}>
+    <div key={note} onMouseDown={onMouseDown} className={`w2-h2 border-on-hover centered-text flex-centered ${nutClass} border-transparent cursor-pointer ${modalNoteClass}`}>
       <div className={`${innerFretClass}`}>{ shouldBeHidden ? "" : formattedNote }</div>
     </div>
   );
@@ -56,12 +56,12 @@ const FretNote = (props: FretNoteProps) => {
 
 const Fretboard = () => {
   const [guitarTuning, setGuitar] = useState<Instrument.Tuning>([
-    "E4",
-    "B3",
-    "G3",
-    "D3",
-    "A2",
-    "E2",
+    "D#4",
+    "A#3",
+    "F#3",
+    "C#3",
+    "G#2",
+    "D#2",
   ]);
   const [guitarStrings, setGuitarStrings] = useState(6);
   const [neckLength, setNeckLength] = useState(24);
@@ -69,20 +69,20 @@ const Fretboard = () => {
   const [frets, setFrets] = useState(defaultFrets);
 
   return (
-    <div className="max-width-100 overflow-x-auto flex-column-start">
-      <div className="border t-130" style={{ background: "rgb(164 117 79 / 80%)" }}>
+    <div className="monospaced max-width-100 overflow-x-auto flex-column-start">
+      <div className="t-130" style={{ background: "rgb(164 117 79 / 80%)" }}>
         { 
           guitarTuning.map(note => (
             <div className="flex-centered string" key={`${note}-string`}>
-              { MD.getNextFrom(note, frets.length, indexedNotes).map(([i, note], fret) => <FretNote key={note} note={note} fret={fret} />) }
+              { MD.getNotesFrom(note, frets.length, indexedNotes).map(([i, note], fret) => <FretNote key={note} note={note} fret={fret} />) }
             </div>
           ))
         }
       </div>
-      <div className="flex-centered border t-130">
+      <div className="flex-centered t-130">
         { frets.map(n => {
             const markedFretClass = markedFrets.indexOf(n) !== -1 ? "bold" : "";
-            return (<div key={`fret-${n}`} className={`w2-h2 hoverable centered-text flex-centered border-right ${markedFretClass}`}>
+            return (<div key={`fret-${n}`} className={`w2-h2 border-transparent border-on-hover centered-text flex-centered border-right ${markedFretClass}`}>
               <div className="t-50">{ n }</div>
             </div>);
             }
@@ -148,6 +148,8 @@ const synths : Audio.SynthMap = {
   "default": new Tone.Synth().toDestination()
 };
 
+const APP_VERSION = "v0.4.0";
+
 const App = () => {
   const [ root, setRoot ] = useState<Music.NoteName>("C");
   const [ mode, setMode ] = useState<Music.Mode>(MD.MODES_ALL[0][0]);
@@ -157,7 +159,7 @@ const App = () => {
   const modalNotes = MD.modalNotes(root, mode, MD.MODES_ALL, indexedNotes);
   return (
     <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, synths }}>
-      <h1><a href="/">ZanderNoriega.com</a> - Music Theory Tool Suite (v0.3.0)</h1>
+      <h1><a href="/">ZanderNoriega.com</a> - Music Theory Tool Suite ({APP_VERSION})</h1>
       <h2>The modes on the guitar fretboard</h2>
       <div>The notes for <strong>{root} {mode}</strong> are highlighted:</div>
       <Fretboard />

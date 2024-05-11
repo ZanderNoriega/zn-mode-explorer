@@ -2,8 +2,12 @@ body {
   padding: 1em;
 }
 
+.monospaced {
+  font-family: 'Courier New', Courier, monospace;
+}
+
 .hoverable:hover {
-  border: .1em solid #ff9600;
+  border-right: .06em solid #ff9600;
   box-sizing: border-box;
 }
 
@@ -28,6 +32,10 @@ body {
   font-size: 0.5em;
 }
 
+.t-85 {
+  font-size: 0.85em;
+}
+
 .t-120 {
   font-size: 1.2em;
 }
@@ -49,6 +57,16 @@ body {
 
 .border {
   border: .06em solid #000;
+}
+
+.border-transparent {
+  border: 3px solid rgba(0.0, 0.0, 0.0, 0.0);
+  box-sizing: border-box;
+}
+
+.border-on-hover:hover {
+  border: 3px solid #ff9600;
+  box-sizing: border-box;
 }
 
 .cursor-pointer {
