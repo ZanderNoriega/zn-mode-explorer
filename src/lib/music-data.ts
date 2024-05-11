@@ -97,7 +97,6 @@ export const modalNotes = (
   indexedNotes: MusicData.IndexedNote[],
   semitoneDistances: Music.SemitoneDistance[]
 ): MusicData.IndexedNote[] => {
-  console.log("root mode modes", root, mode, modes);
   // start from the right indexedNotes index
   let startingIndex = 0;
   for (let i = 0; i < indexedNotes.length; i++) {

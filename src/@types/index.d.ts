@@ -53,3 +53,7 @@ namespace Instrument {
   type Tuning = Music.Note[];
   type Fret = number;
 }
+
+namespace Audio {
+  type SynthMap = { [k: string]: BaseSynth };
+}

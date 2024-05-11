@@ -3,8 +3,8 @@ import { createContext, useContext } from "react";
 import './App.css';
 // import "./@types/index.d.ts";
 import * as MD from "./lib/music-data";
+import "tone";
 
-// console.log(MD.getNextFrom("A4", 12, xs));
 const indexedNotes = MD.generateNoteIndexes();
 
 type ProjectSettings = { 
@@ -16,6 +16,7 @@ type ProjectSettings = {
   showOctaves: boolean,
   whiteKeysOnly: boolean,
   modalNotesOnly: boolean,
+  synths: Audio.SynthMap,
 };
 const ProjectSettingsContext = createContext<ProjectSettings | null>(null);
 
@@ -42,8 +43,13 @@ const FretNote = (props: FretNoteProps) => {
   const innerFretClass = fret === 0 || fret === 12 || fret === 24 ? "" : "t-50";
   const modalNoteClass = isModalNote && ! shouldBeHidden ? "hl-bg bold" : "";
 
+  const onClick = () => {
+    const synth : Tone.BaseSynth | undefined = projectSettings!.synths["default"];
+    synth!.triggerAttackRelease(note, "16n");
+  };
+
   return (
-    <div key={note} className={`w2-h2 hoverable centered-text flex-centered ${nutClass} border-right cursor-pointer ${modalNoteClass}`}>
+    <div key={note} onClick={onClick} className={`w2-h2 hoverable centered-text flex-centered ${nutClass} border-right cursor-pointer ${modalNoteClass}`}>
       <div className={`${innerFretClass}`}>{ shouldBeHidden ? "" : formattedNote }</div>
     </div>
   );
@@ -142,6 +148,10 @@ const ProjectSettingsForm = (props: ProjectSettingsFormProps) => {
   );
 };
 
+const synths : Audio.SynthMap = {
+  "default": new Tone.Synth().toDestination()
+};
+
 const App = () => {
   const [ root, setRoot ] = useState<Music.NoteName>("C");
   const [ baseScale, setBaseScale ] = useState<Music.BaseScale>("major");
@@ -151,8 +161,8 @@ const App = () => {
   const [ modalNotesOnly, setModalNotesOnly ] = useState(false);
   const modalNotes = MD.modalNotes(root, mode, MD.MODES[baseScale], indexedNotes, MD.semitoneDistanceMap[baseScale]);
   return (
-    <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, baseScale }}>
-      <h1>Zander Noriega - Music Theory Tool Suite (v0.1.2)</h1>
+    <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, baseScale, synths }}>
+      <h1>Zander Noriega - Music Theory Tool Suite (v0.2.0)</h1>
       <h2>The modes on the guitar fretboard</h2>
       <div>The notes for <strong>{root} {mode}</strong> are highlighted:</div>
       <Fretboard />
