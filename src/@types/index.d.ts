@@ -12,8 +12,37 @@ namespace Music {
     "lydian" |
     "mixolydian" |
     "aeolian" |
-    "locrian";
+    "locrian" |
+
+    "aeolian #7" |
+    "locrian ♮6" |
+    "augmented major" |
+    "dorian #11" |
+    "phrygian dominant" |
+    "lydian ♯2" |
+    "super-Locrian double flat7" |
+
+    "jazz minor" |
+    "dorian b2 (phrygian #6)" |
+    "lydian augmented" |
+    "lydian dominant (aka overtone scale)" |
+    "mixolydian b6" |
+    "aeolian b5" |
+    "super-locrian (aka altered)";
+
   type SemitoneDistance = number;
+  type SemitoneDistanceMap = {
+    major: SemitoneDistance[],
+    harmonicMinor: SemitoneDistance[],
+    melodicMinor: SemitoneDistance[],
+  };
+  type BaseScale = keyof SemitoneDistanceMap;
+  type ModesMap = { 
+    major: Mode[],
+    harmonicMinor: Mode[],
+    melodicMinor: Mode[],
+  };
+
 }
 
 namespace MusicData {

@@ -31,15 +31,37 @@ export const getNextFrom = (from: Music.Note, count: number, iNotes: MusicData.I
 export const hasAccidental = (note: Music.Note): boolean =>
   note.indexOf("b") !== -1 || note.indexOf("#") !== -1
 
-export const MODES : Music.Mode[] = [
-  "ionian",
-  "dorian",
-  "phrygian",
-  "lydian",
-  "mixolydian",
-  "aeolian",
-  "locrian",
-];
+export const MODES : Music.ModesMap = {
+  major: [
+    "ionian",
+    "dorian",
+    "phrygian",
+    "lydian",
+    "mixolydian",
+    "aeolian",
+    "locrian",
+  ],
+  // https://en.wikipedia.org/wiki/Harmonic_minor_scale
+  harmonicMinor: [
+    "aeolian #7",
+    "locrian ♮6",
+    "augmented major",
+    "dorian #11",
+    "phrygian dominant",
+    "lydian ♯2",
+    "super-Locrian double flat7"
+  ],
+  // https://www.jazzguitar.be/blog/melodic-minor-modes/
+  melodicMinor: [
+    "jazz minor",
+    "dorian b2 (phrygian #6)",
+    "lydian augmented",
+    "lydian dominant (aka overtone scale)",
+    "mixolydian b6",
+    "aeolian b5",
+    "super-locrian (aka altered)"
+  ],
+};
 
 export const ROOTS : Music.NoteName[] = [
   "C",
@@ -56,8 +78,26 @@ export const ROOTS : Music.NoteName[] = [
   "B",
 ];
 
-export const modalNotes = (root: Music.NoteName, mode: Music.Mode, indexedNotes: MusicData.IndexedNote[]): MusicData.IndexedNote[] => {
+export const BASE_SCALES : ([ Music.BaseScale, string ])[] = [
+  [ "major", "Major" ],
+  [ "harmonicMinor", "Harmonic minor" ],
+  [ "melodicMinor", "Melodic minor" ],
+];
 
+export const semitoneDistanceMap : Music.SemitoneDistanceMap = {
+  major:         [ 2, 2, 1, 2, 2, 2, 1 ],
+  harmonicMinor: [ 2, 1, 2, 2, 1, 3, 1 ],
+  melodicMinor:  [ 2, 1, 2, 2, 2, 2, 1 ],
+}
+
+export const modalNotes = (
+  root: Music.NoteName,
+  mode: Music.Mode,
+  modes: Music.Mode[],
+  indexedNotes: MusicData.IndexedNote[],
+  semitoneDistances: Music.SemitoneDistance[]
+): MusicData.IndexedNote[] => {
+  console.log("root mode modes", root, mode, modes);
   // start from the right indexedNotes index
   let startingIndex = 0;
   for (let i = 0; i < indexedNotes.length; i++) {
@@ -69,16 +109,16 @@ export const modalNotes = (root: Music.NoteName, mode: Music.Mode, indexedNotes:
   }
 
   // so we start from the right distance element
-  const modeIndex = MODES.reduce((acc, m, i) => {
+  const modeIndex = modes.reduce((acc, m, i) => {
     return m === mode ? i : acc;
   }, 0);
   let distanceIndex = modeIndex;
   const xs : MusicData.IndexedNote[] = [];
   for (let i = startingIndex; i < indexedNotes.length;) {
-    const distance = M.majorScaleDistances[distanceIndex];
+    const distance = semitoneDistances[distanceIndex];
     xs.push(indexedNotes[i]);
     i = i + distance;
-    distanceIndex = (distanceIndex + 1) % M.majorScaleDistances.length;
+    distanceIndex = (distanceIndex + 1) % semitoneDistances.length;
   }
 
   return xs;

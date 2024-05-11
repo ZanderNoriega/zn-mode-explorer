@@ -9,6 +9,7 @@ const indexedNotes = MD.generateNoteIndexes();
 
 type ProjectSettings = { 
   root: Music.NoteName,
+  baseScale: Music.BaseScale,
   mode: Music.Mode,
   indexedNotes: MusicData.IndexedNote[],
   modalNotes: MusicData.IndexedNote[],
@@ -35,7 +36,7 @@ const FretNote = (props: FretNoteProps) => {
   const isModalNote = modalNotes.map(mn => mn[1]).indexOf(note) !== -1;
 
   const nutClass = fret === 0 ? "bold" : "";
-  const innerFretClass = fret === 0 ? "" : "t-50";
+  const innerFretClass = fret === 0 || fret === 12 || fret === 24 ? "" : "t-50";
   const modalNoteClass = isModalNote ? "hl-bg bold" : "";
 
   const shouldBeHidden = (projectSettings!.whiteKeysOnly && MD.hasAccidental(note))
@@ -89,32 +90,45 @@ const Fretboard = () => {
 
 type ProjectSettingsFormProps = {
   setRoot: (x: Music.NoteName) => void,
+  setBaseScale: (x: Music.BaseScale) => void,
   setMode: (x: Music.Mode) => void,
   setShowOctaves: (x: boolean) => void,
   setWhiteKeysOnly: (x: boolean) => void,
   setModalNotesOnly: (x: boolean) => void,
 };
 const ProjectSettingsForm = (props: ProjectSettingsFormProps) => {
-  const { setRoot, setMode, setShowOctaves, setWhiteKeysOnly, setModalNotesOnly } = props;
+  const { setRoot, setBaseScale, setMode, setShowOctaves, setWhiteKeysOnly, setModalNotesOnly } = props;
   const projectSettings = useContext(ProjectSettingsContext);
   return (
     <div>
       <h2>Settings</h2>
-      Mode
-      <select onChange={e => setRoot(e.target.value as Music.NoteName)}>
-        {MD.ROOTS.map((noteName) => (
-          <option key={noteName} value={noteName}>
-            {noteName}
-          </option>
-        ))}
-      </select>
-      <select onChange={e => setMode(e.target.value as Music.Mode)}>
-        {MD.MODES.map((mode) => (
-          <option key={mode} value={mode}>
-            {mode}
-          </option>
-        ))}
-      </select>
+      <div>
+        Base scale:
+        <select onChange={e => setRoot(e.target.value as Music.NoteName)}>
+          {MD.ROOTS.map((noteName) => (
+            <option key={noteName} value={noteName}>
+              {noteName}
+            </option>
+          ))}
+        </select>
+        <select onChange={e => setBaseScale(e.target.value as Music.BaseScale)}>
+          {MD.BASE_SCALES.map(([name, label]) => (
+            <option key={name} value={name}>
+              {label}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        Mode:
+        <select onChange={e => setMode(e.target.value as Music.Mode)}>
+          {MD.MODES[projectSettings!.baseScale || ("major" as Music.BaseScale) ].map((mode) => (
+            <option key={mode} value={mode}>
+              {mode}
+            </option>
+          ))}
+        </select>
+      </div>
       <div>
         Show octaves <input type="checkbox" checked={projectSettings!.showOctaves} onChange={e => setShowOctaves(e.target.checked)} />
       </div>
@@ -130,19 +144,21 @@ const ProjectSettingsForm = (props: ProjectSettingsFormProps) => {
 
 const App = () => {
   const [ root, setRoot ] = useState<Music.NoteName>("C");
-  const [ mode, setMode ] = useState<Music.Mode>("ionian");
+  const [ baseScale, setBaseScale ] = useState<Music.BaseScale>("major");
+  const [ mode, setMode ] = useState<Music.Mode>(MD.MODES[baseScale][0]);
   const [ showOctaves, setShowOctaves ] = useState(true);
   const [ whiteKeysOnly, setWhiteKeysOnly ] = useState(false);
   const [ modalNotesOnly, setModalNotesOnly ] = useState(false);
-  const modalNotes = MD.modalNotes(root, mode, indexedNotes);
+  const modalNotes = MD.modalNotes(root, mode, MD.MODES[baseScale], indexedNotes, MD.semitoneDistanceMap[baseScale]);
   return (
-    <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly }}>
+    <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, baseScale }}>
       <h1>Zander Noriega - Music Education Tool Suite (v0.1)</h1>
       <h2>The modes on the guitar fretboard</h2>
       <div>The notes for <strong>{root} {mode}</strong> are highlighted:</div>
       <Fretboard />
       <ProjectSettingsForm
         setRoot={setRoot}
+        setBaseScale={setBaseScale}
         setMode={setMode}
         setShowOctaves={setShowOctaves}
         setWhiteKeysOnly={setWhiteKeysOnly}
