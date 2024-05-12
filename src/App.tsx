@@ -4,20 +4,10 @@ import './App.css';
 // import "./@types/index.d.ts";
 import * as MD from "./lib/music-data";
 import "tone";
+import ProjectSettingsContext from "./components/ProjectSettingsContext";
+import FretNote from "./components/FretNote";
 
 const indexedNotes = MD.generateNoteIndexes();
-
-type ProjectSettings = { 
-  root: Music.NoteName,
-  mode: Music.Mode,
-  indexedNotes: MusicData.IndexedNote[],
-  modalNotes: MusicData.IndexedNote[],
-  showOctaves: boolean,
-  whiteKeysOnly: boolean,
-  modalNotesOnly: boolean,
-  synths: Audio.SynthMap,
-};
-const ProjectSettingsContext = createContext<ProjectSettings | null>(null);
 
 let defaultFrets : number[] = [];
 for (let i = 0; i < 25; i++) {
@@ -26,42 +16,14 @@ for (let i = 0; i < 25; i++) {
 
 const markedFrets = [3, 5, 7, 9, 12, 15, 17, 19, 22, 24];
 
-type FretNoteProps = { note: Music.Note, fret: Instrument.Fret };
-
-const FretNote = (props: FretNoteProps) => {
-  const { fret, note } = props;
-  const projectSettings = useContext(ProjectSettingsContext);
-  const modalNotes = projectSettings!.modalNotes || [];
-  const formattedNote = projectSettings!.showOctaves ? note : note.replace(/[0-9]|-/, "");
-  const isModalNote = modalNotes.map(mn => mn[1]).indexOf(note) !== -1;
-
-  const shouldBeHidden = (projectSettings!.whiteKeysOnly && MD.hasAccidental(note))
-    || (projectSettings!.modalNotesOnly && !isModalNote)
-
-  const nutClass = fret === 0 ? "bold" : "";
-  const innerFretClass = fret === 0 || fret === 12 || fret === 24 ? "t-85" : "t-50";
-  const modalNoteClass = isModalNote && !shouldBeHidden ? "hl-bg bold" : "";
-
-  const onMouseDown = () => {
-    const synth : Tone.BaseSynth | undefined = projectSettings!.synths["default"];
-    synth!.triggerAttackRelease(note, "16n");
-  };
-
-  return (
-    <div key={note} onMouseDown={onMouseDown} className={`w2-h2 border-on-hover centered-text flex-centered ${nutClass} border-transparent cursor-pointer ${modalNoteClass}`}>
-      <div className={`${innerFretClass}`}>{ shouldBeHidden ? "" : formattedNote }</div>
-    </div>
-  );
-};
-
 const Fretboard = () => {
   const [guitarTuning, setGuitar] = useState<Instrument.Tuning>([
-    "D#4",
-    "A#3",
-    "F#3",
-    "C#3",
-    "G#2",
-    "D#2",
+    "E4",
+    "B3",
+    "G3",
+    "D3",
+    "A2",
+    "E2",
   ]);
   const [guitarStrings, setGuitarStrings] = useState(6);
   const [neckLength, setNeckLength] = useState(24);
