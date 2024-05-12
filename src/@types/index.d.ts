@@ -57,3 +57,16 @@ namespace Instrument {
 namespace Audio {
   type SynthMap = { [k: string]: BaseSynth };
 }
+
+namespace Project {
+  type Settings = { 
+    root: Music.NoteName,
+    mode: Music.Mode,
+    indexedNotes: MusicData.IndexedNote[],
+    modalNotes: MusicData.IndexedNote[],
+    showOctaves: boolean,
+    whiteKeysOnly: boolean,
+    modalNotesOnly: boolean,
+    synths: Audio.SynthMap,
+  };
+}
