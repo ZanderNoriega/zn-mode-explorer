@@ -8,8 +8,6 @@ const FretNote = (props: FretNoteProps) => {
   const { fret, note, string } = props;
   const projectSettings : Project.Settings | null = useContext(ProjectSettingsContext);
   const modalNotes = projectSettings!.modalNotes || [];
-  const noteBucket = projectSettings!.noteBucket || [];
-  const setNoteBucket = projectSettings!.setNoteBucket || (() => {});
   const isModalNote = modalNotes.map(mn => mn[1]).indexOf(note) !== -1;
 
   const shouldBeHidden = (projectSettings!.whiteKeysOnly && MD.hasAccidental(note))
@@ -20,11 +18,14 @@ const FretNote = (props: FretNoteProps) => {
   const modalNoteClass = isModalNote && !shouldBeHidden ? "hl-bg bold" : "";
 
   const onMouseDown = useCallback((e: any) => {
+    const noteBucket = projectSettings!.noteBucket || [];
     const synth : Tone.BaseSynth | undefined = projectSettings!.synths["default"];
     synth!.triggerAttackRelease(note, "16n");
     e.preventDefault();
-    setNoteBucket(noteBucket.concat([[ `${string}-${fret}`, note ]]));
-  }, [ projectSettings, note ]);
+    const setNoteBucket = projectSettings!.setNoteBucket || (() => {});
+    const identifiedNote : MusicData.IdentifiedNote<string> = [ `${string}-${fret}`, note ];
+    setNoteBucket(noteBucket.concat([ identifiedNote ]));
+  }, [ projectSettings, note, fret, string ]);
 
   if (shouldBeHidden) {
     return <div key={note} className={`w2-h2 border-on-hover centered-text flex-centered ${nutClass} border-transparent cursor-pointer ${modalNoteClass}`}>

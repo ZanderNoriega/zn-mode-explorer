@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useRef } from "react";
-import { createContext, useContext } from "react";
+import React, { useState } from "react";
+import { useContext } from "react";
 import './App.css';
 // import "./@types/index.d.ts";
 import * as MD from "./lib/music-data";
@@ -35,9 +35,9 @@ const Fretboard = () => {
     <div className="monospaced max-width-100 overflow-x-auto flex-column-start">
       <div className="t-130" style={{ background: "rgb(164 117 79 / 80%)" }}>
         { 
-          guitarTuning.map((note, i) => (
+          guitarTuning.map((note, gtrStr) => (
             <div className="flex-centered string" key={`${note}-string`}>
-              { MD.getNotesFrom(note, frets.length, indexedNotes).map(([i, note], fret) => <FretNote key={note} note={note} fret={fret} string={i} />) }
+              { MD.getNotesFrom(note, frets.length, indexedNotes).map(([i, note], fret) => <FretNote key={note} note={note} fret={fret} string={gtrStr} />) }
             </div>
           ))
         }

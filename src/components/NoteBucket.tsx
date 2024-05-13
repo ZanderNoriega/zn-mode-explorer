@@ -8,6 +8,7 @@ const NoteBucket = () => {
   const hasNotes = noteBucket.length > 0;
   const noteBucketIndex = useRef(0);
   const onPlay = useCallback(() => {
+    const noteBucket : MusicData.IdentifiedNote<string>[] = projectSettings!.noteBucket || [];
 
     const iNote: MusicData.IdentifiedNote<string> = noteBucket[noteBucketIndex.current];
 
@@ -16,11 +17,11 @@ const NoteBucket = () => {
     setLastPlayed(noteBucketIndex.current);
 
     noteBucketIndex.current = (noteBucketIndex.current + 1) % noteBucket.length;
-  }, [ noteBucket ]);
+  }, [ projectSettings ]);
   const onClear = useCallback(() => {
     const setNoteBucket = projectSettings!.setNoteBucket || (() => {});
     setNoteBucket([]);
-  }, [ ]);
+  }, [ projectSettings ]);
   return (
     <>
       <h2>Note bucket</h2>
