@@ -28,6 +28,10 @@ body {
   background: #d57d3d;
 }
 
+.hl-text {
+  color: #d5ff74;
+}
+
 .t-50 {
   font-size: 0.5em;
 }
@@ -54,6 +58,10 @@ body {
   flex: 1;
 }
 
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
 .border-right {
   box-sizing: border-box;
   border-right: .06em solid #000;
@@ -61,6 +69,12 @@ body {
 
 .border {
   border: .06em solid #000;
+  box-sizing: border-box;
+}
+
+.border-xl {
+  border: 3px solid #ff9600;
+  box-sizing: border-box;
 }
 
 .border-transparent {
@@ -94,4 +108,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: start;
+}
+
+.margin-h-xs {
+  margin-top: .5em;
+  margin-bottom: .5em;
 }
