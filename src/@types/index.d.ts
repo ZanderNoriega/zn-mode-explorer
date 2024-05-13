@@ -60,6 +60,9 @@ namespace Audio {
 }
 
 namespace Project {
+  type LastPlayedNote = MusicData.IdentifiedNote<string>;
+  type NoteBucketNotes = MusicData.IdentifiedNote<string>[];
+  type NoteBucket = [ LastPlayedNote | null, NoteBucketNotes ];
   type Settings = { 
     root: Music.NoteName,
     mode: Music.Mode,
@@ -69,7 +72,7 @@ namespace Project {
     whiteKeysOnly: boolean,
     modalNotesOnly: boolean,
     synths: Audio.SynthMap,
-    noteBucket: MusicData.IdentifiedNote<string>[],
-    setNoteBucket: (x: MusicData.IdentifiedNote<string>[]) => void,
+    noteBucket: NoteBucket,
+    setNoteBucket: (x: NoteBucket) => void,
   };
 }

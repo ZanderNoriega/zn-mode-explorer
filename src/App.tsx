@@ -119,7 +119,7 @@ const App = () => {
   const [ showOctaves, setShowOctaves ] = useState(true);
   const [ whiteKeysOnly, setWhiteKeysOnly ] = useState(false);
   const [ modalNotesOnly, setModalNotesOnly ] = useState(false);
-  const [ noteBucket, setNoteBucket ] = useState<MusicData.IdentifiedNote<string>[]>([]);
+  const [ noteBucket, setNoteBucket ] = useState<Project.NoteBucket>([ null, [] ]);
   const modalNotes = MD.modalNotes(root, mode, MD.MODES_ALL, indexedNotes);
   return (
     <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, noteBucket, synths, setNoteBucket }}>
