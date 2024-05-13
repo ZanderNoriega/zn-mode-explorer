@@ -1,6 +1,8 @@
 import React, { useContext, useCallback, useRef, useState } from "react";
 import ProjectSettingsContext from "./ProjectSettingsContext";
 
+const VERSION = "v0.2.0";
+
 const NoteBucket = () => {
   const [ lastPlayed, setLastPlayed ] = useState<number>(-1);
   const projectSettings = useContext(ProjectSettingsContext);
@@ -24,10 +26,11 @@ const NoteBucket = () => {
   const onClear = useCallback(() => {
     const setNoteBucket = projectSettings!.setNoteBucket || (() => {});
     setNoteBucket([ null, [] ]);
+    noteBucketIndex.current = 0;
   }, [ projectSettings ]);
   return (
     <>
-      <h2>Note bucket</h2>
+      <h3>Note bucket ({VERSION})</h3>
       <div className="flex-centered flex-wrap margin-h-xs">
         { !hasNotes && <p>Add notes by touching a fret. <br/>Then you can play them here.</p> }
         { noteBucket.map(([noteID, note], i) => {
