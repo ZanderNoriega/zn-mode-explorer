@@ -2,12 +2,14 @@ import React, { useContext, useCallback } from "react";
 import ProjectSettingsContext from "./ProjectSettingsContext";
 import * as MD from "../lib/music-data";
 
-type FretNoteProps = { note: Music.Note, fret: Instrument.Fret };
+type FretNoteProps = { note: Music.Note, fret: Instrument.Fret, string: number };
 
 const FretNote = (props: FretNoteProps) => {
-  const { fret, note } = props;
+  const { fret, note, string } = props;
   const projectSettings : Project.Settings | null = useContext(ProjectSettingsContext);
   const modalNotes = projectSettings!.modalNotes || [];
+  const noteBucket = projectSettings!.noteBucket || [];
+  const setNoteBucket = projectSettings!.setNoteBucket || (() => {});
   const isModalNote = modalNotes.map(mn => mn[1]).indexOf(note) !== -1;
 
   const shouldBeHidden = (projectSettings!.whiteKeysOnly && MD.hasAccidental(note))
@@ -21,6 +23,7 @@ const FretNote = (props: FretNoteProps) => {
     const synth : Tone.BaseSynth | undefined = projectSettings!.synths["default"];
     synth!.triggerAttackRelease(note, "16n");
     e.preventDefault();
+    setNoteBucket(noteBucket.concat([[ `${string}-${fret}`, note ]]));
   }, [ projectSettings, note ]);
 
   if (shouldBeHidden) {
