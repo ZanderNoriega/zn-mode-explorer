@@ -33,7 +33,7 @@ const Fretboard = () => {
 
   return (
     <div className="monospaced max-width-100 overflow-x-auto flex-column-start">
-      <div className="t-130" style={{ background: "rgb(164 117 79 / 80%)" }}>
+      <div className="t-130 non-hl-bg">
         { 
           guitarTuning.map((note, gtrStr) => (
             <div className="flex-centered string" key={`${note}-string`}>

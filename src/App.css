@@ -32,6 +32,10 @@ body {
   color: #d5ff74;
 }
 
+.non-hl-bg {
+  background: rgb(164 117 79 / 80%);
+}
+
 .t-50 {
   font-size: 0.5em;
 }
@@ -62,6 +66,11 @@ body {
   flex-wrap: wrap;
 }
 
+.fixed-width-3 {
+  width: 3em;
+  max-width: 3em;
+}
+
 .border-right {
   box-sizing: border-box;
   border-right: .06em solid #000;
@@ -78,6 +87,11 @@ body {
 }
 
 .border-transparent {
+  border: .06em solid rgba(0.0, 0.0, 0.0, 0.0);
+  box-sizing: border-box;
+}
+
+.border-transparent-xl {
   border: 3px solid rgba(0.0, 0.0, 0.0, 0.0);
   box-sizing: border-box;
 }
@@ -89,7 +103,6 @@ body {
 
 .border-radius {
   border-radius: 10em;
-  padding: .15em;
 }
 
 .cursor-pointer {
@@ -110,7 +123,16 @@ body {
   align-items: start;
 }
 
+.margin-xs {
+  margin: .5em;
+}
+
 .margin-h-xs {
   margin-top: .5em;
   margin-bottom: .5em;
+}
+
+.spaced-children-h > * {
+  margin-left: .5em;
+  margin-right: .5em;
 }
