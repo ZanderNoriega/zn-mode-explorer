@@ -47,6 +47,7 @@ namespace Music {
 
 namespace MusicData {
   type IndexedNote = [ number, Music.Note ]
+  type IdentifiedNote<T> = [ T, Music.Note ]
 }
 
 namespace Instrument {
@@ -68,5 +69,7 @@ namespace Project {
     whiteKeysOnly: boolean,
     modalNotesOnly: boolean,
     synths: Audio.SynthMap,
+    noteBucket: MusicData.IdentifiedNote<string>[],
+    setNoteBucket: (x: MusicData.IdentifiedNote<string>[]) => void,
   };
 }

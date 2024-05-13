@@ -50,6 +50,10 @@ body {
   justify-content: center;
 }
 
+.flex-1 {
+  flex: 1;
+}
+
 .border-right {
   box-sizing: border-box;
   border-right: .06em solid #000;
@@ -67,6 +71,11 @@ body {
 .border-on-hover:hover {
   border: 3px solid #ff9600;
   box-sizing: border-box;
+}
+
+.border-radius {
+  border-radius: 10em;
+  padding: .15em;
 }
 
 .cursor-pointer {
