@@ -1,10 +1,10 @@
-import React, { useContext, useCallback } from "react";
+import React, { useContext, useCallback, memo } from "react";
 import ProjectSettingsContext from "./ProjectSettingsContext";
 import * as MD from "../lib/music-data";
 
 type FretNoteProps = { note: Music.Note, fret: Instrument.Fret, string: number };
 
-const FretNote = (props: FretNoteProps) => {
+const FretNote = memo((props: FretNoteProps) => {
   const { fret, note, string } = props;
   const projectSettings : Project.Settings | null = useContext(ProjectSettingsContext);
   const modalNotes = projectSettings!.modalNotes || [];
@@ -24,12 +24,12 @@ const FretNote = (props: FretNoteProps) => {
   const boldClass = isLastPlayed || isNutFret ? "bold" : "";
   const textClass = isLastPlayed ? "hl-text" : "";
 
-  const onMouseDown = useCallback((e: any) => {
+  const onMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const synth : Tone.BaseSynth | undefined = projectSettings!.synths["default"];
     synth!.triggerAttackRelease(note, "16n");
     e.preventDefault();
 
-    const [ lastPlayed, noteBucketNotes ] = projectSettings!.noteBucket || [ null, [] ];
+    const [ , noteBucketNotes ] = projectSettings!.noteBucket || [ null, [] ];
     const setNoteBucket = projectSettings!.setNoteBucket || (() => {});
     const identifiedNote : MusicData.IdentifiedNote<string> = [ `${string}-${fret}`, note ];
     setNoteBucket([ identifiedNote, noteBucketNotes.concat([ identifiedNote ]) ]);
@@ -48,6 +48,6 @@ const FretNote = (props: FretNoteProps) => {
       <div className={`${innerFretClass}`}>{ shouldBeHidden ? "" : formattedNote }</div>
     </div>
   );
-};
+});
 
 export default FretNote;
