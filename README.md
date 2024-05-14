@@ -4,4 +4,4 @@ A tool for studying the musical modes.
 
 Written in TypeScript + React.
 
-Online version [here](https://zandernoriega.com/school).
+Online version [here](https://zandernoriega.com/music-tools/).

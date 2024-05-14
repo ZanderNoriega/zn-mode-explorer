@@ -123,7 +123,6 @@ const App = () => {
   const modalNotes = MD.modalNotes(root, mode, MD.MODES_ALL, indexedNotes);
   return (
     <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, noteBucket, synths, setNoteBucket }}>
-      <h1><a href="/">ZanderNoriega.com</a></h1>
       <p><strong>Music Theory Tool Suite ({APP_VERSION})</strong></p>
       <h3>The modes on the guitar fretboard</h3>
       <div>The notes for <strong>{root} {mode}</strong> are highlighted:</div>
