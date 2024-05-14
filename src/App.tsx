@@ -32,27 +32,30 @@ const Fretboard = () => {
   const [frets, setFrets] = useState(defaultFrets);
 
   return (
-    <div className="monospaced max-width-100 overflow-x-auto flex-column-start">
-      <div className="t-130 non-hl-bg">
-        { 
-          guitarTuning.map((note, gtrStr) => (
-            <div className="flex-centered string" key={`${note}-string`}>
-              { MD.getNotesFrom(note, frets.length, indexedNotes).map(([i, note], fret) => <FretNote key={note} note={note} fret={fret} string={gtrStr} />) }
-            </div>
-          ))
-        }
+    <>
+      <h3>Guitar fretboard (v0.1.0)</h3>
+      <div className="monospaced max-width-100 overflow-x-auto flex-column-start">
+        <div className="t-130 non-hl-bg">
+          { 
+            guitarTuning.map((note, gtrStr) => (
+              <div className="flex-centered string" key={`${note}-string`}>
+                { MD.getNotesFrom(note, frets.length, indexedNotes).map(([i, note], fret) => <FretNote key={note} note={note} fret={fret} string={gtrStr} />) }
+              </div>
+            ))
+          }
+        </div>
+        <div className="flex-centered t-130">
+          { frets.map(n => {
+              const markedFretClass = markedFrets.indexOf(n) !== -1 ? "bold" : "";
+              return (<div key={`fret-${n}`} className={`w2-h2 border-transparent border-on-hover centered-text flex-centered border-right ${markedFretClass}`}>
+                <div className="t-50">{ n }</div>
+              </div>);
+              }
+            )
+          }
+        </div>
       </div>
-      <div className="flex-centered t-130">
-        { frets.map(n => {
-            const markedFretClass = markedFrets.indexOf(n) !== -1 ? "bold" : "";
-            return (<div key={`fret-${n}`} className={`w2-h2 border-transparent border-on-hover centered-text flex-centered border-right ${markedFretClass}`}>
-              <div className="t-50">{ n }</div>
-            </div>);
-            }
-          )
-        }
-      </div>
-    </div>
+    </>
   );
 };
 
@@ -111,7 +114,7 @@ const synths : Audio.SynthMap = {
   "default": new Tone.Synth().toDestination()
 };
 
-const APP_VERSION = "v0.7.0";
+const APP_VERSION = "v0.8.0";
 
 const App = () => {
   const [ root, setRoot ] = useState<Music.NoteName>("C");
@@ -123,8 +126,7 @@ const App = () => {
   const modalNotes = MD.modalNotes(root, mode, MD.MODES_ALL, indexedNotes);
   return (
     <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, noteBucket, synths, setNoteBucket }}>
-      <p><strong>Music Theory Tool Suite ({APP_VERSION})</strong></p>
-      <h3>The modes on the guitar fretboard</h3>
+      <h2><strong>Music Theory Tool Suite ({APP_VERSION})</strong></h2>
       <div>The notes for <strong>{root} {mode}</strong> are highlighted:</div>
       <Fretboard />
       <NoteBucket />
