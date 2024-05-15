@@ -73,6 +73,6 @@ namespace Project {
     modalNotesOnly: boolean,
     synths: Audio.SynthMap,
     noteBucket: NoteBucket,
-    setNoteBucket: (x: NoteBucket) => void,
+    setNoteBucket: (x: NoteBucket | ((x: NoteBucket) => NoteBucket)) => void,
   };
 }

@@ -114,7 +114,7 @@ const synths : Audio.SynthMap = {
   "default": new Tone.Synth().toDestination()
 };
 
-const APP_VERSION = "v0.8.0";
+const APP_VERSION = "v0.9.0";
 
 const App = () => {
   const [ root, setRoot ] = useState<Music.NoteName>("C");
