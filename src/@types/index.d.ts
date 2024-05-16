@@ -56,7 +56,22 @@ namespace Instrument {
 }
 
 namespace Audio {
-  type SynthMap = { [k: string]: BaseSynth };
+  type SynthID = string;
+  type SynthMap = { [k: SynthID]: BaseSynth };
+  type Envelope = {
+    attack: number,
+    decay: number,
+    sustain: number,
+    release: number
+  };
+  type EffectMap = {
+    [k: SynthID]: Tone.AudioNode[]
+  };
+  type Environment = {
+    synths: SynthMap,
+    setEnvelope: (synthID: SynthID, envelope: Envelope) => void,
+    effects: EffectMap
+  };
 }
 
 namespace Project {
@@ -71,7 +86,7 @@ namespace Project {
     showOctaves: boolean,
     whiteKeysOnly: boolean,
     modalNotesOnly: boolean,
-    synths: Audio.SynthMap,
+    audioEnvironment: Audio.Environment,
     noteBucket: NoteBucket,
     setNoteBucket: (x: NoteBucket | ((x: NoteBucket) => NoteBucket)) => void,
   };

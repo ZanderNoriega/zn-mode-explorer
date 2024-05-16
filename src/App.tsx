@@ -7,6 +7,7 @@ import "tone";
 import ProjectSettingsContext from "./components/ProjectSettingsContext";
 import FretNote from "./components/FretNote";
 import NoteBucket from "./components/NoteBucket";
+import SynthSettings from "./components/SynthSettings";
 
 const indexedNotes = MD.generateNoteIndexes();
 
@@ -71,7 +72,7 @@ const ProjectSettingsForm = (props: ProjectSettingsFormProps) => {
   const projectSettings = useContext(ProjectSettingsContext);
   return (
     <div>
-      <h3>Settings</h3>
+      <h3>Global Settings</h3>
       <div>
         Root:
         <select onChange={e => setRoot(e.target.value as Music.NoteName)}>
@@ -110,9 +111,22 @@ const ProjectSettingsForm = (props: ProjectSettingsFormProps) => {
   );
 };
 
+const distortion = new Tone.Distortion(0.2).toDestination();
 const synths : Audio.SynthMap = {
-  "default": new Tone.Synth().toDestination()
+  // "default": new Tone.Synth().toDestination()
+  "default": new Tone.Synth().connect(distortion)
 };
+
+const setEnvelope = (synthID: keyof (typeof synths), envelope: Audio.Envelope): void => {
+  const attack = envelope.attack * 2 / 100;
+  const decay = envelope.decay * 2 / 100;
+  const sustain = envelope.sustain * 1 / 100;
+  const release = envelope.release * 5 / 100;
+  const newEnvelope = { attack, decay, sustain, release };
+  synths[synthID].envelope = newEnvelope;
+};
+
+console.log(synths.default);
 
 const APP_VERSION = "v0.9.0";
 
@@ -124,12 +138,14 @@ const App = () => {
   const [ modalNotesOnly, setModalNotesOnly ] = useState(false);
   const [ noteBucket, setNoteBucket ] = useState<Project.NoteBucket>([ null, [] ]);
   const modalNotes = MD.modalNotes(root, mode, MD.MODES_ALL, indexedNotes);
+  const audioEnvironment = { synths, setEnvelope, effects: { default: [ distortion ] } };
   return (
-    <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, noteBucket, synths, setNoteBucket }}>
+    <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, noteBucket, audioEnvironment, setNoteBucket }}>
       <h2><strong>Music Theory Tool Suite ({APP_VERSION})</strong></h2>
       <div>The notes for <strong>{root} {mode}</strong> are highlighted:</div>
       <Fretboard />
       <NoteBucket />
+      <SynthSettings />
       <ProjectSettingsForm
         setRoot={setRoot}
         setMode={setMode}

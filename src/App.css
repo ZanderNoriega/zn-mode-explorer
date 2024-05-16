@@ -136,3 +136,11 @@ body {
   margin-left: .5em;
   margin-right: .5em;
 }
+
+.inline-block {
+  display: inline-block;
+}
+
+.w-10 {
+  width: 10em; 
+}

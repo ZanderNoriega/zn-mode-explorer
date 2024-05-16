@@ -25,7 +25,7 @@ const FretNote = memo((props: FretNoteProps) => {
   const textClass = isLastPlayed ? "hl-text" : "";
 
   const onMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const synth : Tone.BaseSynth | undefined = projectSettings!.synths["default"];
+    const synth : Tone.BaseSynth | undefined = projectSettings!.audioEnvironment.synths["default"];
     synth!.triggerAttackRelease(note, "16n");
     e.preventDefault();
 
