@@ -25,7 +25,7 @@ const NoteBucket = () => {
 
     const iNote: MusicData.IdentifiedNote<string> = noteBucket[noteBucketIndex.current];
 
-    const synth : Tone.BaseSynth | undefined = projectSettings!.synths["default"];
+    const synth : Tone.BaseSynth | undefined = projectSettings!.audioEnvironment!.synths["default"];
     synth!.triggerAttackRelease(iNote[1], "16n");
     setLastPlayed(noteBucketIndex.current);
 
