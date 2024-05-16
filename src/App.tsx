@@ -111,10 +111,11 @@ const ProjectSettingsForm = (props: ProjectSettingsFormProps) => {
   );
 };
 
+const feedbackDelay = new Tone.FeedbackDelay(0.2, 0.8).toDestination();
 const distortion = new Tone.Distortion(0.2).toDestination();
 const synths : Audio.SynthMap = {
   // "default": new Tone.Synth().toDestination()
-  "default": new Tone.Synth().connect(distortion)
+  "default": new Tone.Synth().connect(distortion.connect(feedbackDelay))
 };
 
 const setEnvelope = (synthID: keyof (typeof synths), envelope: Audio.Envelope): void => {
@@ -126,9 +127,7 @@ const setEnvelope = (synthID: keyof (typeof synths), envelope: Audio.Envelope): 
   synths[synthID].envelope = newEnvelope;
 };
 
-console.log(synths.default);
-
-const APP_VERSION = "v0.9.0";
+const APP_VERSION = "v0.10.0";
 
 const App = () => {
   const [ root, setRoot ] = useState<Music.NoteName>("C");
@@ -138,7 +137,7 @@ const App = () => {
   const [ modalNotesOnly, setModalNotesOnly ] = useState(false);
   const [ noteBucket, setNoteBucket ] = useState<Project.NoteBucket>([ null, [] ]);
   const modalNotes = MD.modalNotes(root, mode, MD.MODES_ALL, indexedNotes);
-  const audioEnvironment = { synths, setEnvelope, effects: { default: [ distortion ] } };
+  const audioEnvironment = { synths, setEnvelope, effects: { default: [ distortion, feedbackDelay ] } };
   return (
     <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, noteBucket, audioEnvironment, setNoteBucket }}>
       <h2><strong>Music Theory Tool Suite ({APP_VERSION})</strong></h2>
