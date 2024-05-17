@@ -13,6 +13,14 @@ export const generateNoteIndexes = (): MusicData.IndexedNote[] => {
   return xs;
 }
 
+export const indexedNotes = generateNoteIndexes();
+
+export const getNoteIndex = (note: Music.Note, indexedNotes: MusicData.IndexedNote[]): number | undefined => {
+  return indexedNotes.reduce((acc: number | undefined, x: MusicData.IndexedNote, i: number) => {
+    return x[1] === note ? i : acc;
+  }, undefined);
+}
+
 export const getNotesFrom = (from: Music.Note, count: number, iNotes: MusicData.IndexedNote[]):  MusicData.IndexedNote[] => {
   let xs : MusicData.IndexedNote[] = [];
   let grab : boolean = false;
