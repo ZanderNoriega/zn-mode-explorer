@@ -1,4 +1,4 @@
-import React, { useContext, useCallback, memo } from "react";
+import React, { useContext, useCallback, useMemo, memo } from "react";
 import ProjectSettingsContext from "./ProjectSettingsContext";
 import * as MD from "../lib/music-data";
 
@@ -15,7 +15,10 @@ const FretNote = memo((props: FretNoteProps) => {
 
   const [ lastPlayed, ] = projectSettings!.noteBucket || [ null, [] ];
 
-  const isLastPlayed = lastPlayed !== null && `${string}-${fret}-${note}` === `${lastPlayed[0]}-${lastPlayed[1]}`;
+  const isLastPlayed = useMemo(
+    () => lastPlayed !== null && `${string}-${note}` === `${lastPlayed[0].split('-')[0]}-${lastPlayed[1]}`,
+    [ lastPlayed, string, note ]
+  );
 
   const isNutFret = fret === 0;
   const innerFretClass = fret === 0 || fret === 12 || fret === 24 ? "t-85" : "t-50";

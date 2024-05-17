@@ -60,7 +60,7 @@ const ProjectSettingsForm = (props: ProjectSettingsFormProps) => {
   );
 };
 
-const feedbackDelay = new Tone.FeedbackDelay(0.2, 0.8).toDestination();
+const feedbackDelay = new Tone.FeedbackDelay(0.2, 0.8);
 const distortion = new Tone.Distortion(0.2).toDestination();
 const synths : Audio.SynthMap = {
   // "default": new Tone.Synth().toDestination()

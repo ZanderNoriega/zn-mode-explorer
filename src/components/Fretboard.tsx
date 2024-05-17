@@ -31,7 +31,8 @@ type FretboardSettingsProps = {
   tuning: Instrument.Tuning,
   setTuning: (x: Instrument.Tuning | ((x: Instrument.Tuning) => Instrument.Tuning)) => void
 };
-const FretboardSettings = (props: FretboardSettingsProps) => {
+const FretboardSettings = memo((props: FretboardSettingsProps) => {
+  console.log("rendering FretboardSettings");
   const { tuning, setTuning } = props;
   const reversedTuning = useMemo(() => tuning.concat([]).reverse(), [ tuning ]);
   const onChangeTuning = useCallback((reverseArrayIndex: number) => (note: Music.Note) => {
@@ -105,12 +106,14 @@ const FretboardSettings = (props: FretboardSettingsProps) => {
         <button onClick={onClickRemoveString("high")}>remove</button>
       </div>
       <div className="flex-centered spaced-children-h margin-v-xs">
+        <button onClick={onClickShiftAll(-1)}>Semitone Down</button>
         <button onClick={onClickShiftAll(-12)}>Octave Down</button>
         <button onClick={onClickShiftAll(12)}>Octave Up</button>
+        <button onClick={onClickShiftAll(1)}>Semitone Up</button>
       </div>
     </>
   )
-};
+});
 
 let defaultFrets : number[] = [];
 for (let i = 0; i < 25; i++) {

@@ -58,7 +58,7 @@ const SynthSettings = memo(() => {
     audioEnvironment.effects.default[1].feedback.value = newValue;
   }, [ audioEnvironment ]);
 
-  const [ effectToggles, setEffectToggles ] = useState<EffectToggles>({ FeedbackDelay: true, Distortion: true });
+  const [ effectToggles, setEffectToggles ] = useState<EffectToggles>({ FeedbackDelay: false, Distortion: true });
   const onToggleEffect = (effectName: keyof EffectToggles) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked : boolean = e.target.checked;
     console.log("onToggleEffect", effectName, checked);
