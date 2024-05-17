@@ -58,7 +58,7 @@ const FretboardSettings = (props: FretboardSettingsProps) => {
       const newString : Music.Note = fourthAboveHighest ? fourthAboveHighest[1] : currentHighest;
       setTuning(prev => [ newString ].concat(prev));
     }
-  }, [ reversedTuning, setTuning ]);
+  }, [ reversedTuning, setTuning, tuning ]);
 
   const onClickRemoveString = useCallback((side: StringSide) => () => {
     if (tuning.length < 2) {
@@ -133,7 +133,6 @@ const Fretboard = () => {
     "A2",
     "E2",
   ]);
-  const [guitarStrings, setGuitarStrings] = useState(6);
   const [neckLength, setNeckLength] = useState(24);
 
   const [frets, setFrets] = useState(defaultFrets);
