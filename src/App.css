@@ -24,6 +24,16 @@ body {
   font-weight: bold;
 }
 
+.sel-bg {
+  background: rgba(0, 255, 255, 0.5);
+}
+
+.sel-border-xl {
+  border: 3px solid rgba(0, 255, 255, 0.5);
+  box-sizing: border-box;
+}
+
+
 .hl-bg {
   background: #d57d3d;
 }
@@ -143,4 +153,20 @@ body {
 
 .w-10 {
   width: 10em; 
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
 }
