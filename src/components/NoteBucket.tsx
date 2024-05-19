@@ -2,7 +2,7 @@ import React, { useContext, useCallback, useRef, useState, useEffect, useMemo } 
 import ProjectSettingsContext from "./ProjectSettingsContext";
 import * as MD from "../lib/music-data";
 
-const VERSION = "v0.5.0";
+const VERSION = "v0.6.0";
 
 type BucketMode = "play-note" | "replace-note" | "delete-note" | "select-note";
 
@@ -12,6 +12,7 @@ const NoteBucket = () => {
   const [ noteDuration, setNoteDuration ] = useState(200);
   const [ bucketMode, setBucketMode ] = useState<BucketMode>("play-note");
   const [ selectedNotesMap, setSelectedNotesMap ] = useState<{[k: number]: number}>({});
+  const [ noteBucketNotesGroupSize, setNoteBucketNotesGroupSize ] = useState(4);
   const projectSettings = useContext(ProjectSettingsContext);
   const noteBucket : Project.NoteBucket = useMemo(() => projectSettings!.noteBucket || [ null, [] ], [ projectSettings ]); 
   const noteBucketNotes : MusicData.IdentifiedNote<string>[] = useMemo(() => noteBucket[1], [ noteBucket ]);
@@ -169,6 +170,32 @@ const NoteBucket = () => {
     }
   }, [ projectSettings, noteBucketNotes, noteBucket, selectedNotesMap, selectedNotesEmpty ]);
 
+  const groupedNoteBucketNotes: Project.NoteBucketNotes[] = noteBucketNotes.reduce((
+    acc: { result: Project.NoteBucketNotes[], currentRow: Project.NoteBucketNotes },
+    x: MusicData.IdentifiedNote<string>,
+    i: number
+  ) => {
+    if (i === noteBucketNotes.length - 1) {
+      return {
+        currentRow: [],
+        result: acc.result.concat([ acc.currentRow.concat([ x ]) ]),
+      }
+    } else if (i > 0 && ((acc.currentRow.length + 1) % noteBucketNotesGroupSize === 0)) {
+      return {
+        currentRow: [ ],
+        result: acc.result.concat([ acc.currentRow.concat([ x ]) ]),
+      }
+    } else {
+      return {
+        currentRow: acc.currentRow.concat([ x ]),
+        result: acc.result
+      }
+    }
+  }, { result: [], currentRow: [] }).result;
+
+  const onChangeNoteGroupSize = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNoteBucketNotesGroupSize(+e.target.value);
+  };
 
   return (
     <>
@@ -177,18 +204,21 @@ const NoteBucket = () => {
       { hasNotes &&
         <div className="flex-centered margin-v-xs spaced-children-h">
           <button
+            key={"play-note"}
             onClick={onClickMode("play-note")}
             disabled={!hasNotes}
             className={`${bucketMode === "play-note" ? "border-xl" : "border-transparent-xl"}`}>
             { "Play" }
           </button>
           <button
+            key={"select-note"}
             onClick={onClickMode("select-note")}
             disabled={!hasNotes}
             className={`${bucketMode === "select-note" ? "border-xl" : "border-transparent-xl"}`}>
             { "Select" }
           </button>
           <button
+            key={"delete-note"}
             onClick={onClickMode("delete-note")}
             disabled={!hasNotes}
             className={`${bucketMode === "delete-note" ? "border-xl" : "border-transparent-xl"}`}>
@@ -196,36 +226,48 @@ const NoteBucket = () => {
           </button>
         </div>
       }
-      <div className="flex-centered flex-wrap margin-v-xs monospaced" onClick={onClickNoteContainer}>
-        { noteBucketNotes.map(([noteID, note], i) => {
-            const isLastPlayed = lastPlayed === i;
-            const borderClass = isLastPlayed ? "border-xl hl-text border-radius" : "border-radius border-transparent-xl border-on-hover";
-            const modalNotes = projectSettings!.modalNotes || [];
-            const isModalNote = modalNotes.map(mn => mn[1]).indexOf(note) !== -1;
-            const modalClass = isModalNote ? "hl-bg" : "non-hl-bg";
-            const boldClass = isLastPlayed ? "bold" : "";
-            const isSelected : boolean = selectedNotesMap[i] === i;
-            const selectedClass = isSelected ? `sel-bg absolute w-full h-full border-radius` : "";
-            return (
-              <div
-                className={`fixed-width-3 t-85 flex-centered margin-xs ${modalClass} ${borderClass} ${boldClass} cursor-pointer relative`}
-                key={`${noteID}${i}`}
-                onClick={onClickNote([noteID, note], i)}>
-                { isSelected && <span className={`${selectedClass}`}></span> }
-                <span>{ note }</span>
-              </div>
-            );
-          })
-        }
-      </div>
-      { hasNotes && <div className="centered-text margin-v-xs">
-          <div className="flex-centered margin-v-xs spaced-children-h">
-            <small>
-              { bucketMode === "play-note" ? <div>Click on a note to play it.</div> : null }
-              { bucketMode === "select-note" ? <div>Click on a note to select it for transformation.</div> : null }
-              { bucketMode === "delete-note" ? <div>Click on a note to delete it.</div> : null }
-            </small>
+      { hasNotes &&
+        <div className="flex-centered margin-v-xs spaced-children-h">
+          <small>
+            { bucketMode === "play-note" ? <div>Click on a note to play it.</div> : null }
+            { bucketMode === "select-note" ? <div>Click on a note to select it for transformation.</div> : null }
+            { bucketMode === "delete-note" ? <div>Click on a note to delete it.</div> : null }
+          </small>
+        </div>
+      }
+      { hasNotes &&
+        <div className="text-centered">
+          <small>View notes in groups of: <input type="number" min="2" max="32" value={noteBucketNotesGroupSize} onChange={onChangeNoteGroupSize} /></small>
+        </div>
+      }
+      {
+        groupedNoteBucketNotes.map((noteBucketNotes: Project.NoteBucketNotes, groupIndex: number) => (
+          <div key={`group-${groupIndex}`} className="flex-centered flex-wrap margin-v-xs monospaced" onClick={onClickNoteContainer}>
+            { noteBucketNotes.map(([noteID, note], noteIndex) => {
+                const i : number = noteIndex + (noteBucketNotesGroupSize * groupIndex);
+                const isLastPlayed = lastPlayed === i;
+                const borderClass = isLastPlayed ? "border-xl hl-text border-radius" : "border-radius border-transparent-xl border-on-hover";
+                const modalNotes = projectSettings!.modalNotes || [];
+                const isModalNote = modalNotes.map(mn => mn[1]).indexOf(note) !== -1;
+                const modalClass = isModalNote ? "hl-bg" : "non-hl-bg";
+                const boldClass = isLastPlayed ? "bold" : "";
+                const isSelected : boolean = selectedNotesMap[i] === i;
+                const selectedClass = isSelected ? `sel-bg absolute w-full h-full border-radius` : "";
+                return (
+                  <div
+                    className={`fixed-width-3 t-85 flex-centered margin-xs ${modalClass} ${borderClass} ${boldClass} cursor-pointer relative`}
+                    key={`${noteID}${i}`}
+                    onClick={onClickNote([noteID, note], i)}>
+                    { isSelected && <span className={`${selectedClass}`}></span> }
+                    <span>{ note }</span>
+                  </div>
+                );
+              })
+            }
           </div>
+        ))
+      }
+      { hasNotes && <div className="centered-text margin-v-xs">
           <div className="flex-centered margin-v-xs spaced-children-h">
             <span>
               Transform
