@@ -73,22 +73,11 @@ const FretboardSettings = memo((props: FretboardSettingsProps) => {
   }, [ setTuning, tuning ]);
 
   const onClickShiftAll = useCallback((semitones: number) => () => {
-    setTuning(prev => {
-      return prev.map(note => {
-        const maybeMusicDataIndex : number | undefined = MD.getNoteIndex(note, MD.indexedNotes);
-        if (maybeMusicDataIndex === undefined) {
-          return note;
-        } else {
-          const musicDataIndex : number = maybeMusicDataIndex;
-          const newMusicDataIndex : number = musicDataIndex + semitones;
-          if (newMusicDataIndex > (MD.indexedNotes.length - 1) || newMusicDataIndex < 0) {
-            return note;
-          } else {
-            return MD.indexedNotes[newMusicDataIndex][1];
-          }
-        }
-      });
-    });
+    setTuning(prev =>
+      prev.map(note =>
+        MD.findNextBySemitones(semitones, note, MD.indexedNotes)
+      )
+    );
   }, [ setTuning ]);
 
   return (

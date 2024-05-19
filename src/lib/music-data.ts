@@ -21,6 +21,21 @@ export const getNoteIndex = (note: Music.Note, indexedNotes: MusicData.IndexedNo
   }, undefined);
 }
 
+export const findNextBySemitones = (semitones: number, note: Music.Note, indexedNotes: MusicData.IndexedNote[]): Music.Note => {
+  const maybeMusicDataIndex : number | undefined = getNoteIndex(note, indexedNotes);
+  if (maybeMusicDataIndex === undefined) {
+    return note;
+  } else {
+    const musicDataIndex : number = maybeMusicDataIndex;
+    const newMusicDataIndex : number = musicDataIndex + semitones;
+    if (newMusicDataIndex > (indexedNotes.length - 1) || newMusicDataIndex < 0) {
+      return note;
+    } else {
+      return indexedNotes[newMusicDataIndex][1];
+    }
+  }
+};
+
 export const getNotesFrom = (from: Music.Note, count: number, iNotes: MusicData.IndexedNote[]):  MusicData.IndexedNote[] => {
   let xs : MusicData.IndexedNote[] = [];
   let grab : boolean = false;
