@@ -76,7 +76,7 @@ const setEnvelope = (synthID: keyof (typeof synths), envelope: Audio.Envelope): 
   synths[synthID].envelope = newEnvelope;
 };
 
-const APP_VERSION = "v0.12.0";
+const APP_VERSION = "v0.13.0";
 
 const App = () => {
   const [ root, setRoot ] = useState<Music.NoteName>("C");
