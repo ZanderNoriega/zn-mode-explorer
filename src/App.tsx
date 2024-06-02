@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useContext } from "react";
+import React, { useState, useContext, useMemo } from "react";
 import './App.css';
 // import "./@types/index.d.ts";
 import * as MD from "./lib/music-data";
@@ -86,9 +85,18 @@ const App = () => {
   const [ modalNotesOnly, setModalNotesOnly ] = useState(false);
   const [ noteBucket, setNoteBucket ] = useState<Project.NoteBucket>([ null, [] ]);
   const modalNotes = MD.modalNotes(root, mode, MD.MODES_ALL, MD.indexedNotes);
-  const audioEnvironment = { synths, setEnvelope, effects: { default: [ distortion, feedbackDelay ] } };
+  const context = useMemo(() => 
+    ({
+       root, mode, indexedNotes: MD.indexedNotes,
+       modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly,
+       noteBucket, audioEnvironment: { synths, setEnvelope, effects: { default: [ distortion, feedbackDelay ] } }, setNoteBucket 
+    }),
+    [ root, mode, 
+      modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly,
+      noteBucket, setNoteBucket ]
+  );
   return (
-    <ProjectSettingsContext.Provider value={{ root, mode, indexedNotes: MD.indexedNotes, modalNotes, showOctaves, whiteKeysOnly, modalNotesOnly, noteBucket, audioEnvironment, setNoteBucket }}>
+    <ProjectSettingsContext.Provider value={context}>
       <h2><strong>Music Theory Tool Suite ({APP_VERSION})</strong></h2>
       <div>The notes for <strong>{root} {mode}</strong> are highlighted:</div>
       <Fretboard />
